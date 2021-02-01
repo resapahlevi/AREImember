@@ -8,7 +8,9 @@ bool deviceConnected = false;
 void sendtonotify(char *notifying){
   char txString[50];
   strncpy(txString, DEVID, sizeof(txString));
-  strncat(txString, " The data \n",  sizeof(txString));
+  strncat(txString, " | ", sizeof(txString));
+  strncat(txString, notifying,  sizeof(txString));
+  strncat(txString, "\n",  sizeof(txString));
   characteristicTX->setValue(txString); 
   characteristicTX->notify();
 }
