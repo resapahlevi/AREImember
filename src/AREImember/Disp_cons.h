@@ -100,5 +100,6 @@ void DisplayInit(void);
 void drawLogoAreimember(void);
 void ClearDisp(void);
 void Displayed(void);
+void drawFontFaceDemo(char *text);
 
  #endif
