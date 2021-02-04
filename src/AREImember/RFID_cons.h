@@ -9,8 +9,13 @@
 #define SS_PIN          2
 #define RST_PIN         5
 
+typedef enum{
+  onDisp, offDisp, dualDisp, nullDisp
+}DISPMode;
+
+extern DISPMode dispmode;
 void RFIDInit(void);
-uint8_t WritetoTag(char *stringtotag);
+bool WritetoTag(char *stringtotag);
 char * ReadtoTag();
 uint8_t IsNewCardPresent();
 uint8_t PICC_ReadcardSerial();
