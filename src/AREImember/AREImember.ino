@@ -10,38 +10,35 @@ void setup() {
   DisplayInit();
   drawLogoAreimember();
   delay(2000);
-
 }
 
 void loop() {
 
   if (deviceConnected) {
-    ClearDisp();
-    char *Readbuffer = ReadtoTag();
-    if(Readbuffer != NULL){
-      Serial.print(Readbuffer);
-      sendtonotify(Readbuffer);
-      free(Readbuffer);
+    if (blemode == readtag) {
+      char *Readbuffer = ReadtoTag();
+      if (Readbuffer != NULL) {
+        Serial.print(Readbuffer);
+        sendtonotify(Readbuffer);
+        free(Readbuffer);
+      }
+      blemode = nulltag;
     }
-    
-
-
-//    for (byte i = 0; i < sizeof(Readbuffer); i++) {
-//      Serial.print(Readbuffer[i]);
-//    }
-
-
-    //    if (1)
-    //    {
-    //
-    //      float tempAmbiente = 100;
-    //
-    //      sendtonotify("Squanix \n");
-    //
-    //    }
+    else if (blemode == writetag) {
+      drawFontFaceDemo("Write to tag");
+    }
+    else if (blemode == nulltag)
+    {
+      drawFontFaceDemo("Device Ready");
+    }
   }
   else {
-    drawLogoAreimember();
+    char *Readbuffer = ReadtoTag();
+    if (Readbuffer != NULL) {
+      Serial.print(Readbuffer);
+      drawFontFaceDemo(Readbuffer);
+      free(Readbuffer);
+    }
   }
   delay(1000);
 }
