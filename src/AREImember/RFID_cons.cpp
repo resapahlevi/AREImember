@@ -1,10 +1,9 @@
 #include "RFID_cons.h"
 
-MFRC522 mfrc522(SS_PIN, RST_PIN);  
-MFRC522::StatusCode status; 
+MFRC522 mfrc522(SS_PIN, RST_PIN);
+MFRC522::StatusCode status;
 
-byte buffer[18];  
-byte size = sizeof(buffer);
+DISPMode dispmode = onDisp;
 
 uint8_t pageAddr = 0x06;
 
@@ -13,34 +12,36 @@ void RFIDInit() {
   mfrc522.PCD_Init();
 }
 
-uint8_t WritetoTag(char *stringtotag) {
+bool WritetoTag(char *stringtotag) {
 
-  if ( ! mfrc522.PICC_IsNewCardPresent()){
-    return 0;
-  }
-
-  if ( ! mfrc522.PICC_ReadCardSerial()){
-    return 0;
-  }
+  byte Writebuffer[18];
   
-  memcpy(buffer, stringtotag, 16);
+  if ( ! mfrc522.PICC_IsNewCardPresent()) {
+    return 0;
+  }
+
+  if ( ! mfrc522.PICC_ReadCardSerial()) {
+    return 0;
+  }
+
+  memcpy(Writebuffer, stringtotag, 16);
 
   for (int i = 0; i < 4; i++) {
-    status = (MFRC522::StatusCode) mfrc522.MIFARE_Ultralight_Write(pageAddr + i, &buffer[i * 4], 4);
+    status = (MFRC522::StatusCode) mfrc522.MIFARE_Ultralight_Write(pageAddr + i, &Writebuffer[i * 4], 4);
     if (status != MFRC522::STATUS_OK) {
-      return 7;
+      return false;
     }
   }
   mfrc522.PICC_HaltA();
-  return 9;
+  return true;
 }
 
 char *ReadtoTag() {
-   if ( ! mfrc522.PICC_IsNewCardPresent()){
+  if ( ! mfrc522.PICC_IsNewCardPresent()) {
     return NULL;
   }
 
-  if ( ! mfrc522.PICC_ReadCardSerial()){
+  if ( ! mfrc522.PICC_ReadCardSerial()) {
     return NULL;
   }
   byte Readbuffer[18];
@@ -52,15 +53,15 @@ char *ReadtoTag() {
   }
 
   mfrc522.PICC_HaltA();
-  strcpy(blockdata,((char*)Readbuffer));
+  strcpy(blockdata, ((char*)Readbuffer));
 
   return blockdata;
 }
 
-uint8_t IsNewCardPresent(){
+uint8_t IsNewCardPresent() {
   return mfrc522.PICC_IsNewCardPresent();
 }
 
-uint8_t PICC_ReadcardSerial(){
+uint8_t PICC_ReadcardSerial() {
   return mfrc522.PICC_ReadCardSerial();
 }
