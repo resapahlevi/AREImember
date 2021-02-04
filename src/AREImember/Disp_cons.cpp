@@ -24,4 +24,19 @@ void ClearDisp(){
 void Displayed(){
       display.display();
 }
+
+void drawFontFaceDemo(char *text) {
+    display.clear();
+    display.setTextAlignment(TEXT_ALIGN_LEFT);
+    display.setFont(ArialMT_Plain_24);
+    display.drawString(0,10, text);
+    Displayed();
+}
+
+void drawTextFlowDemo() {
+    display.setFont(ArialMT_Plain_10);
+    display.setTextAlignment(TEXT_ALIGN_LEFT);
+    display.drawStringMaxWidth(0, 0, 128,
+      "Lorem ipsum\n dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore." );
+}
  
