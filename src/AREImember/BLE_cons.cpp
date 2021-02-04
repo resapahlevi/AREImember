@@ -1,17 +1,19 @@
 
 #include "BLE_cons.h"
+#include "RFID_cons.h"
 #include <string.h>
 
-BLECharacteristic *characteristicTX; 
+BLECharacteristic *characteristicTX;
 bool deviceConnected = false;
+BLEMode blemode = nulltag;
 
-void sendtonotify(char *notifying){
+void sendtonotify(char *notifying) {
   char txString[50];
   strncpy(txString, DEVID, sizeof(txString));
   strncat(txString, " | ", sizeof(txString));
   strncat(txString, notifying,  sizeof(txString));
   strncat(txString, "\n",  sizeof(txString));
-  characteristicTX->setValue(txString); 
+  characteristicTX->setValue(txString);
   characteristicTX->notify();
 }
 
@@ -19,9 +21,28 @@ class CharacteristicCallbacks: public BLECharacteristicCallbacks {
     void onWrite(BLECharacteristic *characteristic) {
       std::string rxValue = characteristic->getValue();
       if (rxValue.length() > 0) {
-
-        for (int i = 0; i < rxValue.length(); i++) {
-
+        if (rxValue.find("WEN|") != -1) {
+          blemode = writetag;
+          sendtonotify("Now tag your card");
+          char *item = GetItem(rxValue, 4);
+          if( !WritetoTag(item)){
+             sendtonotify("Writing card failed");
+          }
+          else{
+             sendtonotify("Writing card success");
+          }
+          delete[] item;
+          blemode = nulltag;
+        }
+        else if (rxValue.find("REN") != -1) {
+          sendtonotify("Read Tag");
+          blemode = readtag;
+        }
+        else if (rxValue.find("B1") != -1) {
+          sendtonotify("B1");
+        }
+        else if (rxValue.find("B0") != -1) {
+          sendtonotify("B0");
         }
       }
     }
@@ -36,6 +57,14 @@ class ServerCallbacks: public BLEServerCallbacks {
       deviceConnected = false;
     }
 };
+
+char *GetItem( std::string str, int from) {
+
+  char * writable = new char[str.size() + 1];
+  std::copy(str.begin()+from, str.end(), writable);
+  writable[str.size()] = '\0'; 
+  return writable;
+}
 
 void BLEInit() {
   BLEDevice::init("AREImember");                              // The name of the BLE dev that appear on your smartphone
@@ -60,6 +89,6 @@ void BLEInit() {
   // Start the service
   service->start();
 
-  // Start advertising 
+  // Start advertising
   server->getAdvertising()->start();
 }
