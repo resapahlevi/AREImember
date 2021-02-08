@@ -4,7 +4,7 @@
 
 
 #include <Wire.h>              
-#include "SSD1306Wire.h"
+#include <TFT_eSPI.h> 
 
 #define Areimember_Logo_width 128
 #define Areimember_Logo_height 64

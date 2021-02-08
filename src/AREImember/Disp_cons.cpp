@@ -1,42 +1,30 @@
 
 #include "Disp_cons.h"
 
-SSD1306Wire display(0x3c, SDA, SCL);
+//SSD1306Wire display(0x3c, SDA, SCL);
+TFT_eSPI display = TFT_eSPI();
 
-void DisplayInit(){
+void DisplayInit() {
   display.init();
 
-  display.flipScreenVertically();
-  display.setFont(ArialMT_Plain_10);
+  display.fillScreen(TFT_BLACK);
+  display.setRotation(0);
 }
 
 void drawLogoAreimember() {
 
-    display.drawXbm(0, 0, Areimember_Logo_width, Areimember_Logo_height, Areimember_Logo_bits);
-    Displayed();
+  display.drawXBitmap(64, 0, Areimember_Logo_bits, Areimember_Logo_width, Areimember_Logo_height, TFT_WHITE, TFT_RED);
 }
 
-void ClearDisp(){
-  display.clear();
-  Displayed();
-}
-
-void Displayed(){
-      display.display();
+void ClearDisp() {
+  display.fillScreen(TFT_BLACK);
 }
 
 void drawFontFaceDemo(char *text) {
-    display.clear();
-    display.setTextAlignment(TEXT_ALIGN_LEFT);
-    display.setFont(ArialMT_Plain_24);
-    display.drawString(0,10, text);
-    Displayed();
-}
+  ClearDisp();
+  drawLogoAreimember();
+  display.setTextSize(2);
+  display.setTextColor(TFT_RED, TFT_BLACK);
 
-void drawTextFlowDemo() {
-    display.setFont(ArialMT_Plain_10);
-    display.setTextAlignment(TEXT_ALIGN_LEFT);
-    display.drawStringMaxWidth(0, 0, 128,
-      "Lorem ipsum\n dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore." );
+  display.drawString(text, 0, 96, 4);
 }
- 
