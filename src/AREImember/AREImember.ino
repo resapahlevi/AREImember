@@ -10,6 +10,7 @@
 uint16_t timersleep = 0;
 
 void setup() {
+  Serial.begin(9600);
   RFIDInit();
   BLEInit();
   DisplayInit();
@@ -26,6 +27,7 @@ void loop() {
     if (blemode == readtag) {
       char *Readbuffer = ReadtoTag();
       if (Readbuffer != NULL) {
+        Serial.println(Readbuffer);
         sendtonotify(Readbuffer);
         free(Readbuffer);
       }
